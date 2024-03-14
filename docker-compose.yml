@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  php:
+    image: php:7.4-apache
+    volumes:
+      - ./php/:/var/www/html/
+    ports:
+      - "8880:80"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    depends_on:
+      - db
+    command: >
+      bash -c "
+      docker-php-ext-install mysqli && 
+      docker-php-ext-enable mysqli && 
+      apache2-foreground"
+
+  db:
+    image: mariadb:latest
+    volumes:
+      - ./db/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
